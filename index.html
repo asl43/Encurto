@@ -3,181 +3,636 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Encurtador com Registro e Rastreamento</title>
+  <title>Encurtador Pro - Registro e Analytics</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 30px;
-      background: #f2f2f2;
-    }
-    input, button, select {
-      padding: 10px;
-      margin: 5px;
-      width: 280px;
-    }
-    button {
-      cursor: pointer;
-    }
-    .visitantes, .estatisticas {
-      margin-top: 30px;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
-      text-align: left;
-    }
-    ul {
-      list-style: none;
+    * {
+      margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
-    li {
-      padding: 6px;
-      border-bottom: 1px solid #ddd;
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
     }
-    .exportar {
-      margin-top: 15px;
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
       text-align: center;
+      margin-bottom: 30px;
+      color: white;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .input-container {
+      position: relative;
+    }
+
+    input[type="text"], input[type="url"], select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      color: white;
+    }
+
+    .result-box {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border: 2px solid #10b981;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      word-break: break-all;
+    }
+
+    .result-box a {
+      color: #059669;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .visitor-item {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 4px solid #667eea;
+      transition: all 0.3s ease;
+    }
+
+    .visitor-item:hover {
+      background: #f3f4f6;
+      transform: translateX(4px);
+    }
+
+    .visitor-name {
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 5px;
+    }
+
+    .visitor-details {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .export-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      z-index: 1000;
+      transform: translateX(100%);
+      transition: all 0.3s ease;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .toast.error {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-radius: 50%;
+      border-top-color: #667eea;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .copy-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .qr-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .card {
+        padding: 20px;
+      }
+      
+      .export-buttons {
+        flex-direction: column;
+      }
     }
   </style>
-  <!-- Bibliotecas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 </head>
 <body>
+  <div class="container">
+    <header class="header">
+      <h1>🚀 Encurtador Pro</h1>
+      <p>Registre, rastreie e analise seus links com precisão</p>
+    </header>
 
-  <header>
-    <h1>🔗 Encurtador com Registro e Rastreamento</h1>
-  </header>
+    <!-- Main Form -->
+    <div id="mainContent" class="card fade-in">
+      <h2>🔗 Criar Link Encurtado</h2>
+      
+      <div class="form-group">
+        <label for="originalUrl">URL Original</label>
+        <div class="input-container">
+          <input type="url" id="originalUrl" placeholder="https://exemplo.com" required>
+        </div>
+      </div>
 
-  <main id="mainContent">
-    <p>Digite um link para encurtar:</p>
-    <input type="text" id="originalUrl" placeholder="https://exemplo.com"><br>
-    <input type="text" id="origem" placeholder="Origem (WhatsApp, Instagram...) - Opcional"><br>
-    <button onclick="encurtar()">Encurtar</button>
-    <p id="shortLink"></p>
-  </main>
+      <div class="form-group">
+        <label for="origem">Origem do Tráfego</label>
+        <select id="origem">
+          <option value="">Selecione ou digite...</option>
+          <option value="WhatsApp">WhatsApp</option>
+          <option value="Instagram">Instagram</option>
+          <option value="Facebook">Facebook</option>
+          <option value="Twitter">Twitter</option>
+          <option value="Email">Email</option>
+          <option value="SMS">SMS</option>
+          <option value="LinkedIn">LinkedIn</option>
+          <option value="TikTok">TikTok</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
 
-  <div id="formVisita" style="display:none;">
-    <h2>Registrar Visita</h2>
-    <input type="text" id="nome" placeholder="Seu nome"><br>
-    <input type="text" id="celular" placeholder="Seu celular"><br>
-    <button onclick="salvarVisita()">Confirmar Visita</button>
-  </div>
+      <div class="form-group">
+        <label for="origemCustom">Origem Personalizada (opcional)</label>
+        <input type="text" id="origemCustom" placeholder="Digite uma origem personalizada">
+      </div>
 
-  <div class="estatisticas">
-    <h2>📊 Estatísticas</h2>
-    <p><strong>Total de Links:</strong> <span id="totalLinks">0</span></p>
-    <p><strong>Total de Visitas:</strong> <span id="totalVisitas">0</span></p>
+      <button class="btn btn-primary" onclick="encurtar()">
+        <span id="btnText">🔗 Encurtar Link</span>
+        <span id="btnLoader" class="loading hidden"></span>
+      </button>
 
-    <label>Filtrar por período:</label>
-    <select id="filtroPeriodo" onchange="atualizarEstatisticas()">
-      <option value="todos">Todos</option>
-      <option value="dia">Hoje</option>
-      <option value="semana">Últimos 7 dias</option>
-      <option value="mes">Este mês</option>
-      <option value="ano">Este ano</option>
-    </select>
+      <div id="shortLink"></div>
+    </div>
 
-    <h3>Visitas por Origem:</h3>
-    <ul id="origensList"></ul>
-    <h3>Ranking de Nomes:</h3>
-    <ul id="rankingList"></ul>
+    <!-- Visit Form -->
+    <div id="formVisita" class="card fade-in hidden">
+      <h2>👋 Registrar Sua Visita</h2>
+      <p style="margin-bottom: 20px; color: #6b7280;">Para acessar o conteúdo, precisamos de algumas informações:</p>
+      
+      <div class="form-group">
+        <label for="nome">Seu Nome</label>
+        <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+      </div>
 
-    <button style="margin-top:10px;background:#ff4444;color:white;" onclick="limparEstatisticas()">🗑️ Limpar Estatísticas</button>
-  </div>
+      <div class="form-group">
+        <label for="celular">Seu WhatsApp</label>
+        <input type="text" id="celular" placeholder="(11) 99999-9999" required>
+      </div>
 
-  <div class="visitantes">
-    <h2>👥 Visitantes Registrados</h2>
-    <ul id="visitorList"></ul>
+      <div class="form-group">
+        <label for="email">Email (opcional)</label>
+        <input type="email" id="email" placeholder="seu@email.com">
+      </div>
 
-    <div class="exportar">
-      <button onclick="exportarExcel()">📑 Exportar Excel</button>
-      <button onclick="exportarPDF()">📄 Exportar PDF</button>
+      <button class="btn btn-success" onclick="salvarVisita()">
+        ✅ Confirmar e Acessar
+      </button>
+    </div>
+
+    <!-- Statistics -->
+    <div class="card">
+      <h2>📊 Analytics e Estatísticas</h2>
+      
+      <div class="form-group">
+        <label for="filtroPeriodo">Período de Análise</label>
+        <select id="filtroPeriodo" onchange="atualizarEstatisticas()">
+          <option value="todos">Todos os períodos</option>
+          <option value="dia">Hoje</option>
+          <option value="semana">Últimos 7 dias</option>
+          <option value="mes">Este mês</option>
+          <option value="ano">Este ano</option>
+        </select>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number" id="totalLinks">0</div>
+          <div class="stat-label">Links Criados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="totalVisitas">0</div>
+          <div class="stat-label">Total de Visitas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="visitasHoje">0</div>
+          <div class="stat-label">Visitas Hoje</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="origemMaisUsada">-</div>
+          <div class="stat-label">Origem Top</div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
+        <div>
+          <h3>🌐 Visitas por Origem</h3>
+          <div id="origensList"></div>
+        </div>
+        <div>
+          <h3>👑 Ranking de Usuários</h3>
+          <div id="rankingList"></div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 30px;">
+        <button class="btn btn-danger" onclick="limparEstatisticas()">
+          🗑️ Limpar Dados
+        </button>
+      </div>
+    </div>
+
+    <!-- Visitors List -->
+    <div class="card">
+      <h2>👥 Visitantes Registrados</h2>
+      <div id="visitorList"></div>
+
+      <div class="export-buttons">
+        <button class="btn btn-success" onclick="exportarExcel()">
+          📑 Excel
+        </button>
+        <button class="btn btn-secondary" onclick="exportarPDF()">
+          📄 PDF
+        </button>
+        <button class="btn btn-primary" onclick="exportarCSV()">
+          📋 CSV
+        </button>
+      </div>
     </div>
   </div>
 
-  <footer>
-    <p>&copy; 2025 Meu Site. Todos os direitos reservados.</p>
-  </footer>
-
   <script>
-    // Coloque aqui sua URL do Apps Script
     const GOOGLE_SCRIPT_URL = "COLE_SUA_URL_AQUI";
 
-    // Função para encurtar link
-    function encurtar() {
-      const originalUrl = document.getElementById('originalUrl').value;
-      const origem = document.getElementById('origem').value || "Não informada";
-      if (!originalUrl) return alert("Digite um link válido!");
-
-      const codigo = Math.random().toString(36).substring(2, 8);
-      const shortUrl = `${window.location.origin}${window.location.pathname}?r=${codigo}`;
-
-      localStorage.setItem("link_" + codigo, JSON.stringify({url: originalUrl, origem}));
-
-      atualizarEstatisticas();
-
-      document.getElementById('shortLink').innerHTML =
-        `Seu link: <a href="${shortUrl}">${shortUrl}</a>`;
+    // Utility Functions
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => document.body.removeChild(toast), 300);
+      }, 3000);
     }
 
-    // Detectar se acessou com link encurtado
+    function validateURL(url) {
+      try {
+        new URL(url);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function formatPhone(phone) {
+      const cleaned = phone.replace(/\D/g, '');
+      if (cleaned.length === 11) {
+        return `(${cleaned.substring(0,2)}) ${cleaned.substring(2,7)}-${cleaned.substring(7)}`;
+      }
+      return phone;
+    }
+
+    function generateShortCode() {
+      return Math.random().toString(36).substring(2, 8) + Date.now().toString(36).slice(-2);
+    }
+
+    // URL Shortener
+    function encurtar() {
+      const originalUrl = document.getElementById('originalUrl').value.trim();
+      const origem = document.getElementById('origem').value || document.getElementById('origemCustom').value.trim() || "Não informada";
+      
+      if (!originalUrl) {
+        showToast('Por favor, digite uma URL válida!', 'error');
+        return;
+      }
+      
+      if (!validateURL(originalUrl)) {
+        showToast('URL inválida! Verifique o formato.', 'error');
+        return;
+      }
+
+      const btnText = document.getElementById('btnText');
+      const btnLoader = document.getElementById('btnLoader');
+      
+      btnText.classList.add('hidden');
+      btnLoader.classList.remove('hidden');
+
+      setTimeout(() => {
+        const codigo = generateShortCode();
+        const shortUrl = `${window.location.origin}${window.location.pathname}?r=${codigo}`;
+        
+        const linkData = {
+          url: originalUrl,
+          origem: origem,
+          created: new Date().toISOString(),
+          visits: 0
+        };
+
+        const links = JSON.parse(localStorage.getItem("links") || "{}");
+        links[codigo] = linkData;
+        localStorage.setItem("links", JSON.stringify(links));
+
+        btnText.classList.remove('hidden');
+        btnLoader.classList.add('hidden');
+
+        const resultHtml = `
+          <div class="result-box">
+            <h3>✅ Link Encurtado com Sucesso!</h3>
+            <div style="margin: 15px 0;">
+              <strong>Link Original:</strong><br>
+              <small>${originalUrl}</small>
+            </div>
+            <div style="margin: 15px 0; position: relative;">
+              <strong>Link Encurtado:</strong><br>
+              <a href="${shortUrl}" target="_blank">${shortUrl}</a>
+              <button class="copy-btn" onclick="copyToClipboard('${shortUrl}')">📋</button>
+            </div>
+            <div class="qr-container">
+              <canvas id="qr-${codigo}"></canvas>
+            </div>
+          </div>
+        `;
+        
+        document.getElementById('shortLink').innerHTML = resultHtml;
+        
+        // Generate QR Code
+        setTimeout(() => {
+          const qr = new QRious({
+            element: document.getElementById(`qr-${codigo}`),
+            value: shortUrl,
+            size: 150
+          });
+        }, 100);
+
+        atualizarEstatisticas();
+        showToast('Link encurtado criado com sucesso!');
+        
+        // Clear form
+        document.getElementById('originalUrl').value = '';
+        document.getElementById('origem').value = '';
+        document.getElementById('origemCustom').value = '';
+      }, 1000);
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Link copiado para a área de transferência!');
+      }).catch(() => {
+        showToast('Erro ao copiar link', 'error');
+      });
+    }
+
+    // Visit Handler
     window.onload = function () {
       const params = new URLSearchParams(window.location.search);
       const codigo = params.get("r");
 
       if (codigo) {
-        const dados = JSON.parse(localStorage.getItem("link_" + codigo));
-        if (dados) {
+        const links = JSON.parse(localStorage.getItem("links") || "{}");
+        if (links[codigo]) {
           document.getElementById("mainContent").style.display = "none";
-          document.getElementById("formVisita").style.display = "block";
+          document.getElementById("formVisita").classList.remove('hidden');
           localStorage.setItem("visitandoCodigo", codigo);
+          
+          // Update visit count
+          links[codigo].visits = (links[codigo].visits || 0) + 1;
+          localStorage.setItem("links", JSON.stringify(links));
+        } else {
+          showToast('Link não encontrado!', 'error');
         }
       }
       carregarVisitas();
       atualizarEstatisticas();
     };
 
-    // Salvar visita
     function salvarVisita() {
-      const nome = document.getElementById("nome").value;
-      const celular = document.getElementById("celular").value;
+      const nome = document.getElementById("nome").value.trim();
+      const celular = document.getElementById("celular").value.trim();
+      const email = document.getElementById("email").value.trim();
       const codigo = localStorage.getItem("visitandoCodigo");
-      const dados = JSON.parse(localStorage.getItem("link_" + codigo));
+      
+      if (!nome || !celular) {
+        showToast('Nome e celular são obrigatórios!', 'error');
+        return;
+      }
 
-      if (!nome || !celular) return alert("Preencha todos os campos!");
+      const links = JSON.parse(localStorage.getItem("links") || "{}");
+      const linkData = links[codigo];
+      
+      if (!linkData) {
+        showToast('Erro: Link não encontrado!', 'error');
+        return;
+      }
 
       const visitas = JSON.parse(localStorage.getItem("visitas") || "[]");
-
       const novaVisita = {
+        id: Date.now().toString(),
         nome,
-        celular,
-        link: dados.url,
-        origem: dados.origem,
-        data: new Date().toISOString()
+        celular: formatPhone(celular),
+        email,
+        link: linkData.url,
+        origem: linkData.origem,
+        data: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        ip: 'Não disponível'
       };
 
       visitas.push(novaVisita);
       localStorage.setItem("visitas", JSON.stringify(visitas));
-      carregarVisitas();
-      atualizarEstatisticas();
 
-      // Envia também para o Google Sheets
+      // Send to Google Sheets if configured
       if (GOOGLE_SCRIPT_URL !== "COLE_SUA_URL_AQUI") {
         fetch(GOOGLE_SCRIPT_URL, {
           method: "POST",
           body: JSON.stringify(novaVisita),
           headers: {"Content-Type": "application/json"}
-        });
+        }).catch(console.error);
       }
 
-      alert("Visita registrada! Redirecionando...");
-      window.location.href = dados.url;
+      showToast('Visita registrada! Redirecionando...');
+      
+      setTimeout(() => {
+        window.location.href = linkData.url;
+      }, 1500);
     }
 
-    // Filtro de período
+    // Statistics and Analytics
     function filtrarPorPeriodo(visitas) {
       const filtro = document.getElementById("filtroPeriodo").value;
       const agora = new Date();
@@ -192,32 +647,19 @@
       });
     }
 
-    // Carregar lista de visitas
-    function carregarVisitas() {
-      const visitas = JSON.parse(localStorage.getItem("visitas") || "[]");
-      const lista = document.getElementById("visitorList");
-      lista.innerHTML = "";
-
-      filtrarPorPeriodo(visitas).forEach(v => {
-        const li = document.createElement("li");
-        li.textContent = `${v.nome} (${v.celular}) visitou ${v.link} via ${v.origem} em ${new Date(v.data).toLocaleString()}`;
-        lista.appendChild(li);
-      });
-    }
-
-    // Atualizar estatísticas
     function atualizarEstatisticas() {
-      let totalLinks = 0;
-      for (let key in localStorage) {
-        if (key.startsWith("link_")) totalLinks++;
-      }
-      document.getElementById("totalLinks").textContent = totalLinks;
-
+      const links = JSON.parse(localStorage.getItem("links") || "{}");
       const visitas = JSON.parse(localStorage.getItem("visitas") || "[]");
       const filtradas = filtrarPorPeriodo(visitas);
-      document.getElementById("totalVisitas").textContent = filtradas.length;
+      const hoje = new Date().toDateString();
+      const visitasHoje = visitas.filter(v => new Date(v.data).toDateString() === hoje);
 
-      // Estatísticas por origem
+      // Update stat cards
+      document.getElementById("totalLinks").textContent = Object.keys(links).length;
+      document.getElementById("totalVisitas").textContent = filtradas.length;
+      document.getElementById("visitasHoje").textContent = visitasHoje.length;
+
+      // Origem statistics
       const origens = {};
       filtradas.forEach(v => {
         origens[v.origem] = (origens[v.origem] || 0) + 1;
@@ -225,13 +667,28 @@
 
       const origensList = document.getElementById("origensList");
       origensList.innerHTML = "";
-      for (let origem in origens) {
-        const li = document.createElement("li");
-        li.textContent = `${origem}: ${origens[origem]} visitas`;
-        origensList.appendChild(li);
+      
+      const origensOrdenadas = Object.entries(origens)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+      if (origensOrdenadas.length > 0) {
+        document.getElementById("origemMaisUsada").textContent = origensOrdenadas[0][0];
+        
+        origensOrdenadas.forEach(([origem, qtd]) => {
+          const item = document.createElement("div");
+          item.className = "visitor-item";
+          item.innerHTML = `
+            <div class="visitor-name">${origem}</div>
+            <div class="visitor-details">${qtd} visitas</div>
+          `;
+          origensList.appendChild(item);
+        });
+      } else {
+        document.getElementById("origemMaisUsada").textContent = "-";
       }
 
-      // Ranking de nomes
+      // User ranking
       const ranking = {};
       filtradas.forEach(v => {
         ranking[v.nome] = (ranking[v.nome] || 0) + 1;
@@ -239,65 +696,196 @@
 
       const rankingList = document.getElementById("rankingList");
       rankingList.innerHTML = "";
+      
       Object.entries(ranking)
         .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
         .forEach(([nome, qtd]) => {
-          const li = document.createElement("li");
-          li.textContent = `${nome}: ${qtd} acessos`;
-          rankingList.appendChild(li);
+          const item = document.createElement("div");
+          item.className = "visitor-item";
+          item.innerHTML = `
+            <div class="visitor-name">${nome}</div>
+            <div class="visitor-details">${qtd} acessos</div>
+          `;
+          rankingList.appendChild(item);
         });
     }
 
-    // Limpar estatísticas
-    function limparEstatisticas() {
-      if (confirm("Tem certeza que deseja apagar todos os registros?")) {
-        localStorage.removeItem("visitas");
-        carregarVisitas();
-        atualizarEstatisticas();
+    function carregarVisitas() {
+      const visitas = JSON.parse(localStorage.getItem("visitas") || "[]");
+      const lista = document.getElementById("visitorList");
+      lista.innerHTML = "";
+
+      const filtradas = filtrarPorPeriodo(visitas)
+        .sort((a, b) => new Date(b.data) - new Date(a.data))
+        .slice(0, 20);
+
+      if (filtradas.length === 0) {
+        lista.innerHTML = "<p style='text-align: center; color: #6b7280;'>Nenhuma visita registrada ainda.</p>";
+        return;
       }
+
+      filtradas.forEach(v => {
+        const item = document.createElement("div");
+        item.className = "visitor-item";
+        item.innerHTML = `
+          <div class="visitor-name">${v.nome}</div>
+          <div class="visitor-details">
+            📱 ${v.celular} ${v.email ? `| 📧 ${v.email}` : ''}<br>
+            🔗 <a href="${v.link}" target="_blank">${v.link.substring(0, 50)}...</a><br>
+            📍 Via ${v.origem} | 🕒 ${new Date(v.data).toLocaleString()}
+          </div>
+        `;
+        lista.appendChild(item);
+      });
     }
 
-    // Exportar Excel
+    // Export Functions
     function exportarExcel() {
       const visitas = filtrarPorPeriodo(JSON.parse(localStorage.getItem("visitas") || "[]"));
-      if (visitas.length === 0) return alert("Nenhuma visita registrada!");
+      if (visitas.length === 0) {
+        showToast("Nenhuma visita para exportar!", 'error');
+        return;
+      }
 
       const dados = visitas.map(v => ({
         Nome: v.nome,
         Celular: v.celular,
+        Email: v.email || 'Não informado',
         Link: v.link,
         Origem: v.origem,
-        Data: new Date(v.data).toLocaleString()
+        Data: new Date(v.data).toLocaleString(),
+        'User Agent': v.userAgent || 'Não disponível'
       }));
 
       const ws = XLSX.utils.json_to_sheet(dados);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Visitas");
 
-      XLSX.writeFile(wb, "visitas.xlsx");
+      const filename = `visitas_${new Date().toISOString().split('T')[0]}.xlsx`;
+      XLSX.writeFile(wb, filename);
+      
+      showToast(`Arquivo ${filename} baixado com sucesso!`);
     }
 
-    // Exportar PDF (com tabela)
-    async function exportarPDF() {
+    function exportarPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
 
       const visitas = filtrarPorPeriodo(JSON.parse(localStorage.getItem("visitas") || "[]"));
-      if (visitas.length === 0) return alert("Nenhuma visita registrada!");
+      if (visitas.length === 0) {
+        showToast("Nenhuma visita para exportar!", 'error');
+        return;
+      }
 
-      const colunas = ["Nome", "Celular", "Link", "Origem", "Data"];
-      const linhas = visitas.map(v => [v.nome, v.celular, v.link, v.origem, new Date(v.data).toLocaleString()]);
+      doc.setFontSize(16);
+      doc.text("Relatório de Visitas - Encurtador Pro", 14, 15);
+      
+      doc.setFontSize(10);
+      doc.text(`Gerado em: ${new Date().toLocaleString()}`, 14, 25);
+      doc.text(`Total de registros: ${visitas.length}`, 14, 31);
 
-      doc.text("Relatório de Visitas", 14, 15);
+      const colunas = ["Nome", "Celular", "Email", "Origem", "Data"];
+      const linhas = visitas.map(v => [
+        v.nome,
+        v.celular,
+        v.email || 'N/A',
+        v.origem,
+        new Date(v.data).toLocaleString()
+      ]);
+
       doc.autoTable({
         head: [colunas],
         body: linhas,
-        startY: 20,
-        styles: { fontSize: 9 }
+        startY: 40,
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [102, 126, 234] }
       });
 
-      doc.save("visitas.pdf");
+      const filename = `relatorio_visitas_${new Date().toISOString().split('T')[0]}.pdf`;
+      doc.save(filename);
+      
+      showToast(`Arquivo ${filename} baixado com sucesso!`);
     }
+
+    function exportarCSV() {
+      const visitas = filtrarPorPeriodo(JSON.parse(localStorage.getItem("visitas") || "[]"));
+      if (visitas.length === 0) {
+        showToast("Nenhuma visita para exportar!", 'error');
+        return;
+      }
+
+      const csvContent = [
+        ['Nome', 'Celular', 'Email', 'Link', 'Origem', 'Data'],
+        ...visitas.map(v => [
+          v.nome,
+          v.celular,
+          v.email || 'Não informado',
+          v.link,
+          v.origem,
+          new Date(v.data).toLocaleString()
+        ])
+      ].map(row => row.join(',')).join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `visitas_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      
+      showToast("Arquivo CSV baixado com sucesso!");
+    }
+
+    function limparEstatisticas() {
+      if (confirm("⚠️ Tem certeza que deseja apagar TODOS os registros?\n\nEsta ação não pode ser desfeita!")) {
+        localStorage.removeItem("visitas");
+        localStorage.removeItem("links");
+        carregarVisitas();
+        atualizarEstatisticas();
+        showToast("Todos os dados foram apagados!", 'error');
+      }
+    }
+
+    // Auto-update statistics every 30 seconds
+    setInterval(() => {
+      atualizarEstatisticas();
+    }, 30000);
+
+    // Custom origem handler
+    document.getElementById('origem').addEventListener('change', function() {
+      const customInput = document.getElementById('origemCustom');
+      if (this.value === 'Outro') {
+        customInput.style.display = 'block';
+        customInput.focus();
+      } else {
+        customInput.style.display = 'none';
+        customInput.value = '';
+      }
+    });
+
+    // Phone formatting
+    document.getElementById('celular').addEventListener('input', function() {
+      let value = this.value.replace(/\D/g, '');
+      if (value.length <= 11) {
+        if (value.length > 6) {
+          value = `(${value.substring(0,2)}) ${value.substring(2,7)}-${value.substring(7)}`;
+        } else if (value.length > 2) {
+          value = `(${value.substring(0,2)}) ${value.substring(2)}`;
+        }
+        this.value = value;
+      }
+    });
+
+    // Enter key handlers
+    document.getElementById('originalUrl').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') encurtar();
+    });
+
+    document.getElementById('celular').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') salvarVisita();
+    });
   </script>
 </body>
 </html>
